@@ -1,0 +1,143 @@
+{
+  "version": 3,
+  "targets": {
+    "net8.0": {
+      "MemoryPack/1.21.0": {
+        "type": "package",
+        "dependencies": {
+          "MemoryPack.Core": "1.21.0",
+          "MemoryPack.Generator": "1.21.0"
+        }
+      },
+      "MemoryPack.Core/1.21.0": {
+        "type": "package",
+        "compile": {
+          "lib/net8.0/MemoryPack.Core.dll": {}
+        },
+        "runtime": {
+          "lib/net8.0/MemoryPack.Core.dll": {}
+        }
+      },
+      "MemoryPack.Generator/1.21.0": {
+        "type": "package"
+      }
+    }
+  },
+  "libraries": {
+    "MemoryPack/1.21.0": {
+      "sha512": "13vgZvUZAKSnAEuOn5ISpnH39D642W6FLwJSgxDuOt0wRhN9Y8Mo1IVV3l/R7cKiJw1JFS4K+GLk77SJuIGBsg==",
+      "type": "package",
+      "path": "memorypack/1.21.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Icon.png",
+        "memorypack.1.21.0.nupkg.sha512",
+        "memorypack.nuspec"
+      ]
+    },
+    "MemoryPack.Core/1.21.0": {
+      "sha512": "rxXCVxpFEzZ9tGeHCj/HIuM5sMHV7cWLhwlgLsEgArQCae//+Y230ycbqPx1+EDUdqaErZK20ODwNWuMM1Hq2g==",
+      "type": "package",
+      "path": "memorypack.core/1.21.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Icon.png",
+        "lib/net7.0/MemoryPack.Core.dll",
+        "lib/net8.0/MemoryPack.Core.dll",
+        "lib/netstandard2.1/MemoryPack.Core.dll",
+        "memorypack.core.1.21.0.nupkg.sha512",
+        "memorypack.core.nuspec"
+      ]
+    },
+    "MemoryPack.Generator/1.21.0": {
+      "sha512": "zwnzL6Y3z1W7YAudU8qgIDYxuU/UNqfES6ycAcR9XrsxS//TVIMecPLvSeUhVrvaydvI1P7bkCfMRKVSoAVahQ==",
+      "type": "package",
+      "path": "memorypack.generator/1.21.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Icon.png",
+        "analyzers/dotnet/cs/MemoryPack.Generator.dll",
+        "memorypack.generator.1.21.0.nupkg.sha512",
+        "memorypack.generator.nuspec"
+      ]
+    }
+  },
+  "projectFileDependencyGroups": {
+    "net8.0": [
+      "MemoryPack >= 1.21.0"
+    ]
+  },
+  "packageFolders": {
+    "/home/codespace/.nuget/packages/": {}
+  },
+  "project": {
+    "version": "1.0.0",
+    "restore": {
+      "projectUniqueName": "/workspaces/FXAI/OandaDataApi.csproj",
+      "projectName": "OandaDataApi",
+      "projectPath": "/workspaces/FXAI/OandaDataApi.csproj",
+      "packagesPath": "/home/codespace/.nuget/packages/",
+      "outputPath": "/workspaces/FXAI/obj/",
+      "projectStyle": "PackageReference",
+      "configFilePaths": [
+        "/home/codespace/.nuget/NuGet/NuGet.Config"
+      ],
+      "originalTargetFrameworks": [
+        "net8.0"
+      ],
+      "sources": {
+        "https://api.nuget.org/v3/index.json": {}
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "projectReferences": {}
+        }
+      },
+      "warningProperties": {
+        "warnAsError": [
+          "NU1605"
+        ]
+      },
+      "restoreAuditProperties": {
+        "enableAudit": "true",
+        "auditLevel": "low",
+        "auditMode": "direct"
+      }
+    },
+    "frameworks": {
+      "net8.0": {
+        "targetAlias": "net8.0",
+        "dependencies": {
+          "MemoryPack": {
+            "target": "Package",
+            "version": "[1.21.0, )"
+          }
+        },
+        "imports": [
+          "net461",
+          "net462",
+          "net47",
+          "net471",
+          "net472",
+          "net48",
+          "net481"
+        ],
+        "assetTargetFallback": true,
+        "warn": true,
+        "frameworkReferences": {
+          "Microsoft.AspNetCore.App": {
+            "privateAssets": "none"
+          },
+          "Microsoft.NETCore.App": {
+            "privateAssets": "all"
+          }
+        },
+        "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.412/PortableRuntimeIdentifierGraph.json"
+      }
+    }
+  }
+}
