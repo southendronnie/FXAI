@@ -125,9 +125,16 @@ async Task StartOandaStream(string instrument, CancellationToken ct = default)
 }
 
 _ = Task.Run(() => StartOandaStream("EUR_USD"));
-
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 // --- API Endpoints ---
 var app = builder.Build();
+app.UseSwagger();
+app.UseSwaggerUI(options =>
+{
+  options.SwaggerEndpoint("/swagger/v1/swagger.json", "OANDA Data API v1");
+  options.RoutePrefix = ""; // Serve Swagger UI at root
+});
 
 app.MapGet("/api/candles/{timeframe}", (string timeframe, DateTime start, DateTime end) =>
 {
