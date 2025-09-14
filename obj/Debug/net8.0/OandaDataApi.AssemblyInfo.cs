@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("OandaDataApi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8e5c7dd197fef680596978242751f3d81fea16f7")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+66dc95f304759ef596811f56de705b37845520bc")]
 [assembly: System.Reflection.AssemblyProductAttribute("OandaDataApi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("OandaDataApi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
