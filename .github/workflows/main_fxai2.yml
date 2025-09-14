@@ -16,7 +16,7 @@ jobs:
       contents: read #This is required for actions/checkout
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4 
 
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v4
@@ -54,3 +54,4 @@ jobs:
           package: .
 
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_8706ED20B3FA43718201672B82673433 }}
+
