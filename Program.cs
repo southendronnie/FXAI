@@ -2,12 +2,16 @@ using MemoryPack;
 using System.Net.Http.Headers;
 using System.Text.Json;
 
-
+DateTime lastTickTime = DateTime.MinValue;
+var startTime = DateTime.UtcNow;
 
 // --- App Setup ---
 var builder = WebApplication.CreateBuilder(args);
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var accountId = builder.Configuration["Oanda:AccountId"];
 var token = builder.Configuration["Oanda:AccessToken"];
@@ -20,29 +24,29 @@ Directory.CreateDirectory(Path.Combine(basePath, "Ticks"));
 // --- Capture Helpers ---
 void AppendMemoryPack<T>(string filePath, T item)
 {
-    List<T> list;
-    if (File.Exists(filePath))
-    {
-        var bytes = File.ReadAllBytes(filePath);
-        list = MemoryPackSerializer.Deserialize<List<T>>(bytes) ?? new List<T>();
-    }
-    else list = new List<T>();
+  List<T> list;
+  if (File.Exists(filePath))
+  {
+    var bytes = File.ReadAllBytes(filePath);
+    list = MemoryPackSerializer.Deserialize<List<T>>(bytes) ?? new List<T>();
+  }
+  else list = new List<T>();
 
-    list.Add(item); 
-    var newBytes = MemoryPackSerializer.Serialize(list);
-    File.WriteAllBytes(filePath, newBytes);
+  list.Add(item);
+  var newBytes = MemoryPackSerializer.Serialize(list);
+  File.WriteAllBytes(filePath, newBytes);
 }
 
 void AppendCandle(string timeframe, Candle candle)
 {
-    var file = Path.Combine(basePath, $"{timeframe}_{candle.Time:yyyy-MM-dd}.bin");
-    AppendMemoryPack(file, candle);
+  var file = Path.Combine(basePath, $"{timeframe}_{candle.Time:yyyy-MM-dd}.bin");
+  AppendMemoryPack(file, candle);
 }
 
 void AppendTick(PriceTick tick)
 {
-    var file = Path.Combine(basePath, "Ticks", $"ticks_{tick.Time:yyyy-MM-dd}.bin");
-    AppendMemoryPack(file, tick);
+  var file = Path.Combine(basePath, "Ticks", $"ticks_{tick.Time:yyyy-MM-dd}.bin");
+  AppendMemoryPack(file, tick);
 }
 
 // --- Candle Builders ---
@@ -51,149 +55,174 @@ DateTime bucket1m = DateTime.MinValue, bucket5m = DateTime.MinValue;
 
 void ProcessTick(DateTime time, decimal bid, decimal ask)
 {
-    var mid = (bid + ask) / 2;
-    AppendTick(new PriceTick { Time = time, Bid = bid, Ask = ask });
+  lastTickTime = time;
+  var mid = (bid + ask) / 2;
+  AppendTick(new PriceTick { Time = time, Bid = bid, Ask = ask });
 
-    // 1m candle
-    var b1 = new DateTime(time.Ticks - (time.Ticks % TimeSpan.FromMinutes(1).Ticks), time.Kind);
-    if (current1m == null || b1 != bucket1m)
-    {
-        if (current1m != null) AppendCandle("1m", current1m);
-        bucket1m = b1;
-        current1m = new Candle { Time = b1, Open = mid, High = mid, Low = mid, Close = mid };
-    }
-    else
-    {
-        current1m.High = Math.Max(current1m.High, mid);
-        current1m.Low = Math.Min(current1m.Low, mid);
-        current1m.Close = mid;
-    }
+  var b1 = new DateTime(time.Ticks - (time.Ticks % TimeSpan.FromMinutes(1).Ticks), time.Kind);
+  if (current1m == null || b1 != bucket1m)
+  {
+    if (current1m != null) AppendCandle("1m", current1m);
+    bucket1m = b1;
+    current1m = new Candle { Time = b1, Open = mid, High = mid, Low = mid, Close = mid };
+  }
+  else
+  {
+    current1m.High = Math.Max(current1m.High, mid);
+    current1m.Low = Math.Min(current1m.Low, mid);
+    current1m.Close = mid;
+  }
 
-    // 5m candle
-    var b5 = new DateTime(time.Ticks - (time.Ticks % TimeSpan.FromMinutes(5).Ticks), time.Kind);
-    if (current5m == null || b5 != bucket5m)
-    {
-        if (current5m != null) AppendCandle("5m", current5m);
-        bucket5m = b5;
-        current5m = new Candle { Time = b5, Open = mid, High = mid, Low = mid, Close = mid };
-    }
-    else
-    {
-        current5m.High = Math.Max(current5m.High, mid);
-        current5m.Low = Math.Min(current5m.Low, mid);
-        current5m.Close = mid;
-    }
+  var b5 = new DateTime(time.Ticks - (time.Ticks % TimeSpan.FromMinutes(5).Ticks), time.Kind);
+  if (current5m == null || b5 != bucket5m)
+  {
+    if (current5m != null) AppendCandle("5m", current5m);
+    bucket5m = b5;
+    current5m = new Candle { Time = b5, Open = mid, High = mid, Low = mid, Close = mid };
+  }
+  else
+  {
+    current5m.High = Math.Max(current5m.High, mid);
+    current5m.Low = Math.Min(current5m.Low, mid);
+    current5m.Close = mid;
+  }
 }
 
 // --- OANDA Streaming ---
 async Task StartOandaStream(string instrument, CancellationToken ct = default)
 {
-    var domain = isPractice ? "stream-fxpractice.oanda.com" : "stream-fxtrade.oanda.com";
-    var url = $"https://{domain}/v3/accounts/{accountId}/pricing/stream?instruments={instrument}";
+  var domain = isPractice ? "stream-fxpractice.oanda.com" : "stream-fxtrade.oanda.com";
+  var url = $"https://{domain}/v3/accounts/{accountId}/pricing/stream?instruments={instrument}";
 
-    using var http = new HttpClient { Timeout = Timeout.InfiniteTimeSpan };
-    http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+  using var http = new HttpClient { Timeout = Timeout.InfiniteTimeSpan };
+  http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-    using var response = await http.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, ct);
-    response.EnsureSuccessStatusCode();
+  using var response = await http.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, ct);
+  response.EnsureSuccessStatusCode();
 
-    await using var stream = await response.Content.ReadAsStreamAsync(ct);
-    using var reader = new StreamReader(stream);
+  await using var stream = await response.Content.ReadAsStreamAsync(ct);
+  using var reader = new StreamReader(stream);
 
-    while (!reader.EndOfStream && !ct.IsCancellationRequested)
+  while (!reader.EndOfStream && !ct.IsCancellationRequested)
+  {
+    var line = await reader.ReadLineAsync();
+    if (string.IsNullOrWhiteSpace(line)) continue;
+
+    try
     {
-        var line = await reader.ReadLineAsync();
-        if (string.IsNullOrWhiteSpace(line)) continue;
-
-        try
-        {
-            using var doc = JsonDocument.Parse(line);
-            if (doc.RootElement.TryGetProperty("type", out var typeProp) &&
-                typeProp.GetString() == "PRICE")
-            {
-                var time = doc.RootElement.GetProperty("time").GetDateTime();
-                var bid = doc.RootElement.GetProperty("bids")[0].GetProperty("price").GetDecimal();
-                var ask = doc.RootElement.GetProperty("asks")[0].GetProperty("price").GetDecimal();
-                ProcessTick(time, bid, ask);
-            }
-        }
-        catch
-        {
-            // Ignore malformed lines (e.g., heartbeats)
-        }
+      using var doc = JsonDocument.Parse(line);
+      if (doc.RootElement.TryGetProperty("type", out var typeProp) &&
+          typeProp.GetString() == "PRICE")
+      {
+        var time = doc.RootElement.GetProperty("time").GetDateTime();
+        var bid = doc.RootElement.GetProperty("bids")[0].GetProperty("price").GetDecimal();
+        var ask = doc.RootElement.GetProperty("asks")[0].GetProperty("price").GetDecimal();
+        ProcessTick(time, bid, ask);
+      }
     }
+    catch
+    {
+      // Ignore malformed lines
+    }
+  }
 }
 
 _ = Task.Run(() => StartOandaStream("EUR_USD"));
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
 // --- API Endpoints ---
 var app = builder.Build();
+
 app.UseSwagger();
 app.UseSwaggerUI(options =>
 {
   options.SwaggerEndpoint("/swagger/v1/swagger.json", "OANDA Data API v1");
-  options.RoutePrefix = ""; // Serve Swagger UI at root
+  options.RoutePrefix = "";
 });
 
 app.MapGet("/api/candles/{timeframe}", (string timeframe, DateTime start, DateTime end) =>
 {
-    var all = new List<Candle>();
-    for (var date = start.Date; date <= end.Date; date = date.AddDays(1))
-    {
-        var file = Path.Combine(basePath, $"{timeframe}_{date:yyyy-MM-dd}.bin");
-        if (!File.Exists(file)) continue;
-        var bytes = File.ReadAllBytes(file);
-        var list = MemoryPackSerializer.Deserialize<List<Candle>>(bytes);
-        if (list != null) all.AddRange(list.Where(c => c.Time >= start && c.Time <= end));
-    }
-    return Results.Ok(all);
-});
-
-app.MapGet("/api/ticks", (DateTime start, DateTime end) =>
-{
-    var all = new List<PriceTick>();
-    var tickPath = Path.Combine(basePath, "Ticks");
-    for (var date = start.Date; date <= end.Date; date = date.AddDays(1))
-    {
-        var file = Path.Combine(tickPath, $"ticks_{date:yyyy-MM-dd}.bin");
-        if (!File.Exists(file)) continue;
-        var bytes = File.ReadAllBytes(file);
-        var list = MemoryPackSerializer.Deserialize<List<PriceTick>>(bytes);
-        if (list != null) all.AddRange(list.Where(t => t.Time >= start && t.Time <= end));
-    }
-    return Results.Ok(all);
-});
+  var all = new List<Candle>();
+  for (var date = start.Date; date <= end.Date; date = date.AddDays(1))
+  {
+    var file = Path.Combine(basePath, $"{timeframe}_{date:yyyy-MM-dd}.bin");
+    if (!File.Exists(file)) continue;
+    var bytes = File.ReadAllBytes(file);
+    var list = MemoryPackSerializer.Deserialize<List<Candle>>(bytes);
+    if (list != null) all.AddRange(list.Where(c => c.Time >= start && c.Time <= end));
+  }
+  return Results.Ok(all);
+})
+.WithName("GetCandles")
+.WithTags("Candles")
+.WithOpenApi();
 
 app.MapGet("/api/candles/{timeframe}/mp", (string timeframe, DateTime start, DateTime end) =>
 {
-    var all = new List<Candle>();
-    for (var date = start.Date; date <= end.Date; date = date.AddDays(1))
-    {
-        var file = Path.Combine(basePath, $"{timeframe}_{date:yyyy-MM-dd}.bin");
-        if (!File.Exists(file)) continue;
-        var bytes = File.ReadAllBytes(file);
-        var list = MemoryPackSerializer.Deserialize<List<Candle>>(bytes);
-        if (list != null) all.AddRange(list.Where(c => c.Time >= start && c.Time <= end));
-    }
-    var payload = MemoryPackSerializer.Serialize(all);
-    return Results.File(payload, "application/octet-stream");
-});
+  var all = new List<Candle>();
+  for (var date = start.Date; date <= end.Date; date = date.AddDays(1))
+  {
+    var file = Path.Combine(basePath, $"{timeframe}_{date:yyyy-MM-dd}.bin");
+    if (!File.Exists(file)) continue;
+    var bytes = File.ReadAllBytes(file);
+    var list = MemoryPackSerializer.Deserialize<List<Candle>>(bytes);
+    if (list != null) all.AddRange(list.Where(c => c.Time >= start && c.Time <= end));
+  }
+  var payload = MemoryPackSerializer.Serialize(all);
+  return Results.File(payload, "application/octet-stream");
+})
+.WithName("GetCandlesMemoryPack")
+.WithTags("Candles")
+.WithOpenApi();
+
+app.MapGet("/api/ticks", (DateTime start, DateTime end) =>
+{
+  var all = new List<PriceTick>();
+  var tickPath = Path.Combine(basePath, "Ticks");
+  for (var date = start.Date; date <= end.Date; date = date.AddDays(1))
+  {
+    var file = Path.Combine(tickPath, $"ticks_{date:yyyy-MM-dd}.bin");
+    if (!File.Exists(file)) continue;
+    var bytes = File.ReadAllBytes(file);
+    var list = MemoryPackSerializer.Deserialize<List<PriceTick>>(bytes);
+    if (list != null) all.AddRange(list.Where(t => t.Time >= start && t.Time <= end));
+  }
+  return Results.Ok(all);
+})
+.WithName("GetTicks")
+.WithTags("Ticks")
+.WithOpenApi();
 
 app.MapGet("/api/ticks/mp", (DateTime start, DateTime end) =>
 {
-    var all = new List<PriceTick>();
-    var tickPath = Path.Combine(basePath, "Ticks");
-    for (var date = start.Date; date <= end.Date; date = date.AddDays(1))
-    {
-        var file = Path.Combine(tickPath, $"ticks_{date:yyyy-MM-dd}.bin");
-        if (!File.Exists(file)) continue;
-        var bytes = File.ReadAllBytes(file);
-        var list = MemoryPackSerializer.Deserialize<List<PriceTick>>(bytes);
-        if (list != null) all.AddRange(list.Where(t => t.Time >= start && t.Time <= end));
-    }
-    var payload = MemoryPackSerializer.Serialize(all);
-    return Results.File(payload, "application/octet-stream");
-});
+  var all = new List<PriceTick>();
+  var tickPath = Path.Combine(basePath, "Ticks");
+  for (var date = start.Date; date <= end.Date; date = date.AddDays(1))
+  {
+    var file = Path.Combine(tickPath, $"ticks_{date:yyyy-MM-dd}.bin");
+    if (!File.Exists(file)) continue;
+    var bytes = File.ReadAllBytes(file);
+    var list = MemoryPackSerializer.Deserialize<List<PriceTick>>(bytes);
+    if (list != null) all.AddRange(list.Where(t => t.Time >= start && t.Time <= end));
+  }
+  var payload = MemoryPackSerializer.Serialize(all);
+  return Results.File(payload, "application/octet-stream");
+})
+.WithName("GetTicksMemoryPack")
+.WithTags("Ticks")
+.WithOpenApi();
+
+app.MapGet("/health", () =>
+{
+  var uptime = DateTime.UtcNow - startTime;
+  return Results.Ok(new
+  {
+    status = "ok",
+    lastTickTime = lastTickTime == DateTime.MinValue ? null : lastTickTime,
+    uptimeSeconds = (int)uptime.TotalSeconds
+  });
+})
+.WithName("HealthCheck")
+.WithTags("System")
+.WithOpenApi();
 
 app.Run();

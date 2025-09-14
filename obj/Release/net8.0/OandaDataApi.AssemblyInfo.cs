@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("OandaDataApi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+588eadb7e94e24bb37406c8b104bd24983bef007")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+88b4d35c0542f74b00f330bfed93ee6fe1b889fb")]
 [assembly: System.Reflection.AssemblyProductAttribute("OandaDataApi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("OandaDataApi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
