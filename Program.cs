@@ -115,7 +115,29 @@ void ParseOandaPriceJson(string json)
         }
     }
 }
+async Task PollOandaPrices(string instrument, CancellationToken ct = default)
+{
+  var domain = isPractice ? "api-fxpractice.oanda.com" : "api-fxtrade.oanda.com";
+  var url = $"https://{domain}/v3/accounts/{accountId}/pricing?instruments={instrument}";
 
+  using var http = new HttpClient();
+  http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+  while (!ct.IsCancellationRequested)
+  {
+    try
+    {
+      var json = await http.GetStringAsync(url, ct);
+      ParseOandaPriceJson(json); // already defined in your code
+    }
+    catch
+    {
+      // Optional: log or retry
+    }
+
+    await Task.Delay(TimeSpan.FromSeconds(2), ct); // Adjust polling interval as needed
+  }
+}
 // --- OANDA Streaming ---
 async Task StartOandaStream(string instrument, CancellationToken ct = default)
 {//https://api-fxpractice.oanda.com/v3/accounts/101-004-8806632-007/summary
@@ -123,6 +145,8 @@ async Task StartOandaStream(string instrument, CancellationToken ct = default)
   var domain = isPractice ? "api-fxpractice.oanda.com" : "api-fxtrade.oanda.com";
   var url = $"https://{domain}/v3/accounts/{accountId}/pricing?instruments=GBP_USD";
   using var http = new HttpClient { Timeout = Timeout.InfiniteTimeSpan };
+ 
+  
   http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
   using var response = await http.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, ct);
@@ -171,7 +195,7 @@ async Task StartOandaStream(string instrument, CancellationToken ct = default)
   }
 }
 
-_ = Task.Run(() => StartOandaStream("EUR_USD"));
+_ = Task.Run(() => PollOandaPrices("EUR_USD"));
 
 // --- API Endpoints ---
 var app = builder.Build();
