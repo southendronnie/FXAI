@@ -1,9 +1,13 @@
-using MemoryPack;
 using System.Net.Http.Headers;
 using System.Text.Json;
+using Microsoft.AspNetCore.OpenApi;
+using MemoryPack;
 
 DateTime lastTickTime = DateTime.MinValue;
 var startTime = DateTime.UtcNow;
+PriceTick? latestTick = null;
+Candle? latest1m = null;
+Candle? latest5m = null;
 
 // --- App Setup ---
 var builder = WebApplication.CreateBuilder(args);
@@ -56,8 +60,10 @@ DateTime bucket1m = DateTime.MinValue, bucket5m = DateTime.MinValue;
 void ProcessTick(DateTime time, decimal bid, decimal ask)
 {
   lastTickTime = time;
+  latestTick = new PriceTick { Time = time, Bid = bid, Ask = ask };
+
   var mid = (bid + ask) / 2;
-  AppendTick(new PriceTick { Time = time, Bid = bid, Ask = ask });
+  AppendTick(latestTick);
 
   var b1 = new DateTime(time.Ticks - (time.Ticks % TimeSpan.FromMinutes(1).Ticks), time.Kind);
   if (current1m == null || b1 != bucket1m)
@@ -72,6 +78,7 @@ void ProcessTick(DateTime time, decimal bid, decimal ask)
     current1m.Low = Math.Min(current1m.Low, mid);
     current1m.Close = mid;
   }
+  latest1m = current1m;
 
   var b5 = new DateTime(time.Ticks - (time.Ticks % TimeSpan.FromMinutes(5).Ticks), time.Kind);
   if (current5m == null || b5 != bucket5m)
@@ -86,6 +93,7 @@ void ProcessTick(DateTime time, decimal bid, decimal ask)
     current5m.Low = Math.Min(current5m.Low, mid);
     current5m.Close = mid;
   }
+  latest5m = current5m;
 }
 
 // --- OANDA Streaming ---
@@ -213,16 +221,37 @@ app.MapGet("/api/ticks/mp", (DateTime start, DateTime end) =>
 
 app.MapGet("/health", () =>
 {
-  var uptime = DateTime.UtcNow - startTime;
+  var now = DateTime.UtcNow;
+  var uptime = now - startTime;
+  var secondsSinceLastTick = lastTickTime == DateTime.MinValue
+      ? (int?)null
+      : (int)(now - lastTickTime).TotalSeconds;
+
   return Results.Ok(new
   {
-    status = "ok",
-    lastTickTime = lastTickTime == DateTime.MinValue ? null : lastTickTime,
-    uptimeSeconds = (int)uptime.TotalSeconds
+    status = secondsSinceLastTick.HasValue && secondsSinceLastTick < 30 ? "ok" : "stale",
+    uptime = $"{(int)uptime.TotalMinutes}m",
+    lastTick = latestTick,
+    latest1m,
+    latest5m
   });
 })
 .WithName("HealthCheck")
-.WithTags("System")
+.WithTags("Diagnostics")
+.WithOpenApi();
+
+app.MapGet("/stream/status", () =>
+{
+  return Results.Ok(new
+  {
+    lastTickTime,
+    latestTick,
+    latest1m,
+    latest5m
+  });
+})
+.WithName("StreamStatus")
+.WithTags("Diagnostics")
 .WithOpenApi();
 
 app.Run();
