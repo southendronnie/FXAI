@@ -136,7 +136,38 @@ async Task StartOandaStream(string instrument, CancellationToken ct = default)
     var line = await reader.ReadLineAsync();
     if (string.IsNullOrWhiteSpace(line)) continue;
 
-    ParseOandaPriceJson(line);
+    try
+    {
+        using var doc = JsonDocument.Parse(line);
+        // Handle "prices" array (OANDA batch format)
+        if (doc.RootElement.TryGetProperty("prices", out var pricesArr))
+        {
+            foreach (var priceObj in pricesArr.EnumerateArray())
+            {
+                if (priceObj.TryGetProperty("type", out var typeProp) &&
+                    typeProp.GetString() == "PRICE")
+                {
+                    var time = priceObj.GetProperty("time").GetDateTime();
+                    var bid = priceObj.GetProperty("bids")[0].GetProperty("price").GetDecimal();
+                    var ask = priceObj.GetProperty("asks")[0].GetProperty("price").GetDecimal();
+                    ProcessTick(time, bid, ask);
+                }
+            }
+        }
+        // Handle single price object (OANDA single format)
+        else if (doc.RootElement.TryGetProperty("type", out var typeProp) &&
+                 typeProp.GetString() == "PRICE")
+        {
+            var time = doc.RootElement.GetProperty("time").GetDateTime();
+            var bid = doc.RootElement.GetProperty("bids")[0].GetProperty("price").GetDecimal();
+            var ask = doc.RootElement.GetProperty("asks")[0].GetProperty("price").GetDecimal();
+            ProcessTick(time, bid, ask);
+        }
+    }
+    catch
+    {
+        // Ignore malformed lines
+    }
   }
 }
 
