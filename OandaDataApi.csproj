@@ -3,9 +3,11 @@
         <TargetFramework>net8.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <UserSecretsId>69f0a4c3-e89e-458c-96b1-bac9bb024cc1</UserSecretsId>
     </PropertyGroup>
     <ItemGroup>
       <Compile Remove="Models.cs" />
+      <Compile Remove="Statics.cs" />
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="MemoryPack.Core" Version="1.21.4" />

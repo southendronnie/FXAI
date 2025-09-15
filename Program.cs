@@ -98,10 +98,10 @@ void ProcessTick(DateTime time, decimal bid, decimal ask)
 
 // --- OANDA Streaming ---
 async Task StartOandaStream(string instrument, CancellationToken ct = default)
-{
-  var domain = isPractice ? "stream-fxpractice.oanda.com" : "stream-fxtrade.oanda.com";
-  var url = $"https://{domain}/v3/accounts/{accountId}/pricing/stream?instruments={instrument}";
+{//https://api-fxpractice.oanda.com/v3/accounts/101-004-8806632-007/summary
 
+  var domain = isPractice ? "api-fxpractice.oanda.com" : "api-fxtrade.oanda.com";
+  var url = $"https://{domain}/v3/accounts/{accountId}/pricing?instruments=GBP_USD";
   using var http = new HttpClient { Timeout = Timeout.InfiniteTimeSpan };
   http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
