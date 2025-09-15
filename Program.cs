@@ -1,7 +1,7 @@
 using System.Net.Http.Headers;
 using System.Text.Json;
-using Microsoft.AspNetCore.OpenApi;
 using MemoryPack;
+using Microsoft.AspNetCore.OpenApi; // Add this using directive at the top of your file
 
 DateTime lastTickTime = DateTime.MinValue;
 var startTime = DateTime.UtcNow;
@@ -96,6 +96,26 @@ void ProcessTick(DateTime time, decimal bid, decimal ask)
   latest5m = current5m;
 }
 
+// Add a helper to parse the OANDA JSON structure with "prices" array
+void ParseOandaPriceJson(string json)
+{
+    using var doc = JsonDocument.Parse(json);
+    if (doc.RootElement.TryGetProperty("prices", out var pricesArr))
+    {
+        foreach (var priceObj in pricesArr.EnumerateArray())
+        {
+            if (priceObj.TryGetProperty("type", out var typeProp) &&
+                typeProp.GetString() == "PRICE")
+            {
+                var time = priceObj.GetProperty("time").GetDateTime();
+                var bid = Decimal.Parse (priceObj.GetProperty("bids")[0].GetProperty("price").ToString());
+                var ask = Decimal.Parse (priceObj.GetProperty("asks")[0].GetProperty("price").ToString());
+                ProcessTick(time, bid, ask);
+            }
+        }
+    }
+}
+
 // --- OANDA Streaming ---
 async Task StartOandaStream(string instrument, CancellationToken ct = default)
 {//https://api-fxpractice.oanda.com/v3/accounts/101-004-8806632-007/summary
@@ -116,22 +136,7 @@ async Task StartOandaStream(string instrument, CancellationToken ct = default)
     var line = await reader.ReadLineAsync();
     if (string.IsNullOrWhiteSpace(line)) continue;
 
-    try
-    {
-      using var doc = JsonDocument.Parse(line);
-      if (doc.RootElement.TryGetProperty("type", out var typeProp) &&
-          typeProp.GetString() == "PRICE")
-      {
-        var time = doc.RootElement.GetProperty("time").GetDateTime();
-        var bid = doc.RootElement.GetProperty("bids")[0].GetProperty("price").GetDecimal();
-        var ask = doc.RootElement.GetProperty("asks")[0].GetProperty("price").GetDecimal();
-        ProcessTick(time, bid, ask);
-      }
-    }
-    catch
-    {
-      // Ignore malformed lines
-    }
+    ParseOandaPriceJson(line);
   }
 }
 
@@ -161,8 +166,7 @@ app.MapGet("/api/candles/{timeframe}", (string timeframe, DateTime start, DateTi
   return Results.Ok(all);
 })
 .WithName("GetCandles")
-.WithTags("Candles")
-.WithOpenApi();
+.WithTags("Candles").WithOpenApi();
 
 app.MapGet("/api/candles/{timeframe}/mp", (string timeframe, DateTime start, DateTime end) =>
 {
