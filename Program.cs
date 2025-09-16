@@ -16,7 +16,15 @@ builder.Logging.AddConsole();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
+builder.Services.AddCors(options =>
+{
+  options.AddDefaultPolicy(policy =>
+  {
+    policy.AllowAnyOrigin()
+          .AllowAnyHeader()
+          .AllowAnyMethod();
+  });
+});
 var accountId = builder.Configuration["Oanda:AccountId"];
 var token = builder.Configuration["Oanda:AccessToken"];
 var isPractice = bool.Parse(builder.Configuration["Oanda:IsPractice"] ?? "true");
@@ -201,6 +209,7 @@ _ = Task.Run(() => PollOandaPrices("EUR_USD"));
 var app = builder.Build();
 
 app.UseSwagger();
+app.UseCors();
 app.UseSwaggerUI(options =>
 {
   options.SwaggerEndpoint("/swagger/v1/swagger.json", "OANDA Data API v1");
