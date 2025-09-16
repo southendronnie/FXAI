@@ -6,6 +6,20 @@
         <UserSecretsId>69f0a4c3-e89e-458c-96b1-bac9bb024cc1</UserSecretsId>
     </PropertyGroup>
     <ItemGroup>
+      <Compile Remove=".github\**" />
+      <Compile Remove="bin\**" />
+      <Compile Remove="obj\**" />
+      <Content Remove=".github\**" />
+      <Content Remove="bin\**" />
+      <Content Remove="obj\**" />
+      <EmbeddedResource Remove=".github\**" />
+      <EmbeddedResource Remove="bin\**" />
+      <EmbeddedResource Remove="obj\**" />
+      <None Remove=".github\**" />
+      <None Remove="bin\**" />
+      <None Remove="obj\**" />
+    </ItemGroup>
+    <ItemGroup>
       <Compile Remove="Models.cs" />
       <Compile Remove="Statics.cs" />
     </ItemGroup>

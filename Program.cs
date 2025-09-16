@@ -1,7 +1,8 @@
+using MemoryPack;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OpenApi; // Add this using directive at the top of your file
 using System.Net.Http.Headers;
 using System.Text.Json;
-using MemoryPack;
-using Microsoft.AspNetCore.OpenApi; // Add this using directive at the top of your file
 
 DateTime lastTickTime = DateTime.MinValue;
 var startTime = DateTime.UtcNow;
@@ -147,61 +148,6 @@ async Task PollOandaPrices(string instrument, CancellationToken ct = default)
   }
 }
 // --- OANDA Streaming ---
-async Task StartOandaStream(string instrument, CancellationToken ct = default)
-{//https://api-fxpractice.oanda.com/v3/accounts/101-004-8806632-007/summary
-
-  var domain = isPractice ? "api-fxpractice.oanda.com" : "api-fxtrade.oanda.com";
-  var url = $"https://{domain}/v3/accounts/{accountId}/pricing?instruments=GBP_USD";
-  using var http = new HttpClient { Timeout = Timeout.InfiniteTimeSpan };
- 
-  
-  http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-  using var response = await http.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, ct);
-  response.EnsureSuccessStatusCode();
-
-  await using var stream = await response.Content.ReadAsStreamAsync(ct);
-  using var reader = new StreamReader(stream);
-
-  while (!reader.EndOfStream && !ct.IsCancellationRequested)
-  {
-    var line = await reader.ReadLineAsync();
-    if (string.IsNullOrWhiteSpace(line)) continue;
-
-    try
-    {
-        using var doc = JsonDocument.Parse(line);
-        // Handle "prices" array (OANDA batch format)
-        if (doc.RootElement.TryGetProperty("prices", out var pricesArr))
-        {
-            foreach (var priceObj in pricesArr.EnumerateArray())
-            {
-                if (priceObj.TryGetProperty("type", out var typeProp) &&
-                    typeProp.GetString() == "PRICE")
-                {
-                    var time = priceObj.GetProperty("time").GetDateTime();
-                    var bid = priceObj.GetProperty("bids")[0].GetProperty("price").GetDecimal();
-                    var ask = priceObj.GetProperty("asks")[0].GetProperty("price").GetDecimal();
-                    ProcessTick(time, bid, ask);
-                }
-            }
-        }
-        // Handle single price object (OANDA single format)
-        else if (doc.RootElement.TryGetProperty("type", out var typeProp) &&
-                 typeProp.GetString() == "PRICE")
-        {
-            var time = doc.RootElement.GetProperty("time").GetDateTime();
-            var bid = doc.RootElement.GetProperty("bids")[0].GetProperty("price").GetDecimal();
-            var ask = doc.RootElement.GetProperty("asks")[0].GetProperty("price").GetDecimal();
-            ProcessTick(time, bid, ask);
-        }
-    }
-    catch
-    {
-        // Ignore malformed lines
-    }
-  }
-}
 
 _ = Task.Run(() => PollOandaPrices("EUR_USD"));
 
@@ -249,6 +195,17 @@ app.MapGet("/api/candles/{timeframe}/mp", (string timeframe, DateTime start, Dat
 .WithName("GetCandlesMemoryPack")
 .WithTags("Candles")
 .WithOpenApi();
+
+// Remove the invalid method and use minimal API endpoint instead
+app.MapPost("/api/order", (OrderRequest req) =>
+{
+  // Validate and route to broker
+  return Results.Ok();
+})
+.WithName("SubmitOrder")
+.WithTags("Orders")
+.WithOpenApi();
+
 
 app.MapGet("/api/ticks", (DateTime start, DateTime end) =>
 {
