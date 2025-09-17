@@ -1,0 +1,70 @@
+﻿@inject PatternStatsEngine StatsEngine
+@inject CandleLoader Loader
+@inject StrategyExecutionService StrategyService
+
+<h3 class="text-lg font-semibold mb-2">🧠 Strategy Selector</h3>
+
+<table class="table-auto w-full text-sm">
+    <thead>
+        <tr>
+            <th>Pattern</th>
+            <th>Stop Loss</th>
+            <th>Take Profit</th>
+            <th>Horizon</th>
+            <th>Confidence</th>
+            <th>Deploy</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var s in strategies)
+        {
+            <tr>
+                <td>@s.PatternType</td>
+                <td>@s.StopLoss.ToString("F4")</td>
+                <td>@s.TakeProfit.ToString("F4")</td>
+                <td>@s.Horizon</td>
+                <td>@s.ConfidenceScore.ToString("F2")</td>
+                <td><button @onclick="() => DeployStrategy(s)">Run</button></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (status != null)
+{
+    <p class="mt-2 text-green-600 font-semibold">@status</p>
+}
+
+@code {
+    List<StrategyProfile> strategies = new();
+    string? status;
+
+    protected override void OnInitialized()
+    {
+        var stats = StatsEngine.GetStats();
+        strategies = GenerateStrategies(stats);
+    }
+
+    async Task DeployStrategy(StrategyProfile profile)
+    {
+        var candles = await Loader.LoadAsync("EUR/USD", "1m");
+        var costModel = new OandaCostModel { SpreadPips = 1.0m, CommissionPerLot = 0m };
+        int units = 10_000;
+
+        StrategyService.ExecuteStrategy(profile, candles, costModel, units);
+        status = $"✅ Executed strategy: {profile.PatternType} with {profile.Horizon}-candle horizon";
+    }
+
+    List<StrategyProfile> GenerateStrategies(IEnumerable<PatternStats> stats)
+    {
+        return stats.Select(p => new StrategyProfile
+        {
+            PatternType = p.Type,
+            EntryOffset = 0,
+            Horizon = 5,
+            StopLoss = Math.Abs(p.MaxDrawdown),
+            TakeProfit = p.NetPnL * 1.5m,
+            ConfidenceScore = (decimal)(p.HitRate * p.Count * (double)p.NetPnL)
+        }).OrderByDescending(s => s.ConfidenceScore).ToList();
+    }
+}

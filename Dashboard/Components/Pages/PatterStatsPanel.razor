@@ -1,0 +1,42 @@
+﻿@inject PatternStatsEngine StatsEngine
+
+<h3 class="text-lg font-semibold mb-2">📋 Pattern Stats Table</h3>
+
+<select @bind="showNet" class="mb-2 p-1 border rounded">
+    <option value="true">Net PnL</option>
+    <option value="false">Raw PnL</option>
+</select>
+
+<table class="table-auto w-full text-sm">
+    <thead>
+        <tr>
+            <th>Pattern</th>
+            <th>Count</th>
+            <th>Hit Rate</th>
+            <th>@(showNet ? "Net PnL" : "Raw PnL")</th>
+            <th>Max Drawdown</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var s in stats)
+        {
+            <tr>
+                <td>@s.Type</td>
+                <td>@s.Count</td>
+                <td>@s.HitRate.ToString("P1")</td>
+                <td>@(showNet? s.NetPnL.ToString("F4") : s.AveragePnL.ToString("F4"))</td>
+                <td>@s.MaxDrawdown.ToString("F4")</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    List<PatternStats>? stats;
+    bool showNet = true;
+
+    protected override void OnInitialized()
+    {
+        stats = StatsEngine.GetStats().ToList();
+    }
+}

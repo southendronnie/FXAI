@@ -1,0 +1,51 @@
+﻿@inject PatternStatsEngine StatsEngine
+
+<h3 class="text-lg font-semibold mb-2">🏅 Top Patterns</h3>
+
+<select @bind="sortBy" class="mb-2 p-1 border rounded">
+    <option value="NetPnL">Net PnL</option>
+    <option value="HitRate">Hit Rate</option>
+    <option value="Score">Confidence Score</option>
+</select>
+
+<table class="table-auto w-full text-sm">
+    <thead>
+        <tr>
+            <th>Pattern</th>
+            <th>Count</th>
+            <th>Hit Rate</th>
+            <th>Net PnL</th>
+            <th>Score</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var p in topPatterns)
+        {
+            <tr>
+                <td>@p.Type</td>
+                <td>@p.Count</td>
+                <td>@p.HitRate.ToString("P1")</td>
+                <td>@p.NetPnL.ToString("F4")</td>
+                <td>@(p.HitRate* p.Count * (double)p.NetPnL).ToString("F2")</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    string sortBy = "NetPnL";
+    List<PatternStats> topPatterns = new();
+
+    protected override void OnInitialized()
+    {
+        var all = StatsEngine.GetStats().ToList();
+
+        topPatterns = sortBy switch
+        {
+            "HitRate" => all.OrderByDescending(p => p.HitRate).Take(5).ToList(),
+            "NetPnL" => all.OrderByDescending(p => p.NetPnL).Take(5).ToList(),
+            "Score" => all.OrderByDescending(p => p.HitRate * p.Count * (double)p.NetPnL).Take(5).ToList(),
+            _ => all.Take(5).ToList()
+        };
+    }
+}

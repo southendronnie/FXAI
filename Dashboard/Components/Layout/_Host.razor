@@ -1,0 +1,13 @@
+﻿@page "/api/configuration/baseurl"
+@using Microsoft.AspNetCore.Mvc
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+
+@code {
+    
+    public IActionResult OnGetBaseUrl()
+    {
+        var baseUrl = Configuration["ApiSettings:BaseUrl"];
+        return new JsonResult(new { baseUrl });
+    }
+}

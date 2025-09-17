@@ -7,7 +7,7 @@
 
 @code {
     [Parameter] public string Timeframe { get; set; } = "1m";
-    List<Candle> candles = new();
+    List<TradingDashboard.Models.Candle> candles = new();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -15,7 +15,10 @@
         {
             var end = DateTime.UtcNow;
             var start = end.AddMinutes(-60);
-            candles = await Api.GetCandles(Timeframe, start, end);
+
+            // Explicitly specify the type to resolve the conflict
+            var apiCandles = await Api.GetCandles(Timeframe, start, end);
+            candles = apiCandles.Cast<TradingDashboard.Models.Candle>().ToList();
 
             var jsData = candles.Select(c => new object[]
             {
