@@ -1,0 +1,32 @@
+﻿@using TradingDashboard.Models
+@using TradingDashboard.Services
+@inject ApiClient Api
+@inject IJSRuntime JS
+
+<div id="candleChart" style="height: 400px;"></div>
+
+@code {
+    [Parameter] public string Timeframe { get; set; } = "1m";
+    List<Candle> candles = new();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var end = DateTime.UtcNow;
+            var start = end.AddMinutes(-60);
+            candles = await Api.GetCandles(Timeframe, start, end);
+
+            var jsData = candles.Select(c => new object[]
+            {
+                new DateTimeOffset(c.Time).ToUnixTimeMilliseconds(),
+                (double)c.Open,
+                (double)c.High,
+                (double)c.Low,
+                (double)c.Close
+            }).ToList();
+
+            await JS.InvokeVoidAsync("renderCandleChart", "candleChart", jsData);
+        }
+    }
+}

@@ -1,0 +1,22 @@
+﻿@using TradingDashboard.Services
+@inject ApiClient Api
+
+<h3>Trade Controls</h3>
+<div class="order-panel">
+    <button @onclick='() => SubmitOrder("buy")'>Buy</button>
+    <button @onclick='() => SubmitOrder("sell")'>Sell</button>
+    @if (!string.IsNullOrEmpty(status))
+    {
+        <p>@status</p>
+    }
+</div>
+
+@code {
+    string status = "";
+
+    async Task SubmitOrder(string side)
+    {
+        var success = await Api.SubmitOrder(side);
+        status = success ? $"{side.ToUpper()} order submitted" : $"Failed to submit {side} order";
+    }
+}
