@@ -1,0 +1,45 @@
+﻿@page "/dashboard"
+@using TradingDashboard.Components
+@using TradingDashboard.Pages
+
+<h1>Trading Dashboard</h1>
+
+<div class="dashboard-grid">
+    <div class="chart-section">
+        <PatternChart />
+        <TradeStatsPanel />
+    </div>
+
+    <div class="strategy-section">
+        <StrategySelector />
+        <OrderPanel />
+    </div>
+
+    <div class="diagnostics-section">
+        <Diagnostics />
+    </div>
+</div>
+
+<style>
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        grid-template-rows: auto auto;
+        gap: 1rem;
+    }
+
+    .chart-section {
+        grid-column: 1;
+        grid-row: 1;
+    }
+
+    .strategy-section {
+        grid-column: 2;
+        grid-row: 1;
+    }
+
+    .diagnostics-section {
+        grid-column: 1 / span 2;
+        grid-row: 2;
+    }
+</style>

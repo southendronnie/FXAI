@@ -1,0 +1,84 @@
+﻿@using Microsoft.JSInterop
+@inject HttpClient Http
+@inject IJSRuntime JS
+
+<div class="chart-container">
+    <select @onchange="OnMetricChanged">
+        @foreach (var metric in AvailableMetrics)
+        {
+            <option value="@metric">@metric</option>
+        }
+    </select>
+
+    <div id="patternChart" style="height: 400px;"></div>
+</div>
+
+@code {
+    private List<PatternStat> Stats = new();
+    private string SelectedMetric = "WinRate";
+    private string[] AvailableMetrics = new[] { "WinRate", "AvgProfit", "Occurrences" };
+
+    protected override async Task OnInitializedAsync()
+    {
+        Stats = await Http.GetFromJsonAsync<List<PatternStat>>("api/patterns/stats") ?? new();
+        await RenderChartAsync();
+    }
+
+    private async Task OnMetricChanged(ChangeEventArgs e)
+    {
+        SelectedMetric = e.Value?.ToString() ?? "WinRate";
+        await UpdateChartAsync();
+    }
+
+    private async Task RenderChartAsync()
+    {
+        var chartOptions = BuildChartOptions(SelectedMetric);
+        await JS.InvokeVoidAsync("chartInterop.renderChart", "patternChart", chartOptions);
+    }
+
+    private async Task UpdateChartAsync()
+    {
+        var seriesData = Stats.Select(s => GetMetricValue(s, SelectedMetric)).ToArray();
+        await JS.InvokeVoidAsync("chartInterop.updateSeries", "patternChart", seriesData);
+    }
+
+    private object BuildChartOptions(string metric)
+    {
+        return new
+        {
+            chart = new { type = "column" },
+            title = new { text = $"Pattern Stats - {metric}" },
+            xAxis = new
+            {
+                categories = Stats.Select(s => s.PatternName).ToArray(),
+                title = new { text = "Pattern" }
+            },
+            yAxis = new
+            {
+                title = new { text = metric }
+            },
+            series = new[] {
+                new {
+                    name = metric,
+                    data = Stats.Select(s => GetMetricValue(s, metric)).ToArray()
+                }
+            }
+        };
+    }
+
+    private double GetMetricValue(PatternStat stat, string metric) => metric switch
+    {
+        "WinRate" => stat.WinRate,
+        "AvgProfit" => stat.AvgProfit,
+        "Occurrences" => stat.Occurrences,
+        _ => 0
+    };
+
+    public class PatternStat
+    {
+        public string PatternName { get; set; } = string.Empty;
+        public int Occurrences { get; set; }
+        public double WinRate { get; set; }
+        public double AvgProfit { get; set; }
+    }
+}

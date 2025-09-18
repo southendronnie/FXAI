@@ -1,22 +1,35 @@
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Net.Http;
-using TradingDashboard;
 using TradingDashboard.Services;
+using TradingDashboard.Shared;
 
-var builder = WebAssemblyHostBuilder.CreateDefault(args);
-builder.RootComponents.Add<App>("#app");
-builder.RootComponents.Add<HeadOutlet>("head::after");
+var builder = WebApplication.CreateBuilder(args);
 
-// Set your backend API base URL here
-builder.Services.AddScoped(sp => new HttpClient
+// Access configuration
+var config = builder.Configuration;
+var apiBaseUrl = config["ApiBaseUrl"];
+if (string.IsNullOrWhiteSpace(apiBaseUrl))
 {
-  BaseAddress = new Uri("https://fxai2-hrgzeve9dka0aqg3.canadacentral-01.azurewebsites.net")
+    throw new InvalidOperationException("ApiBaseUrl is not set in configuration.");
+}
+Console.WriteLine($"ApiBaseUrl: {apiBaseUrl}"); // For debugging purposes
+
+// Inject HttpClient with base URL from config
+builder.Services.AddHttpClient<ApiClient>(client =>
+{
+    client.BaseAddress = new Uri("https://fxai2-hrgzeve9dka0aqg3.canadacentral-01.azurewebsites.net"); // Replace with the actual base address
 });
 
-// Register your custom API client
-builder.Services.AddScoped<ApiClient>();
+// Register services
+builder.Services.AddRazorComponents().AddInteractiveServerComponents();
+builder.Services.AddSingleton<PatternStatsEngine>();
+builder.Services.AddSingleton<StrategyExecutionService>();
+builder.Services.AddSingleton<CandleLoader>();
 
-await builder.Build().RunAsync();
+var app = builder.Build();
+
+app.UseStaticFiles();
+app.UseRouting();
+app.UseAuthorization();
+app.UseAntiforgery();
+app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
+
+app.Run();

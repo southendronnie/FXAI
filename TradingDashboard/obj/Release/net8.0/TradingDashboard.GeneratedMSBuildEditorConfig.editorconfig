@@ -1,0 +1,99 @@
+is_global = true
+build_property.EnableAotAnalyzer = 
+build_property.EnableSingleFileAnalyzer = 
+build_property.EnableTrimAnalyzer = false
+build_property.IncludeAllContentForSelfExtract = 
+build_property.TargetFramework = net8.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = true
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = TradingDashboard
+build_property.RootNamespace = TradingDashboard
+build_property.ProjectDir = D:\Users\ronwe\Source\Repos\FXAI\TradingDashboard\
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = false
+build_property.RazorLangVersion = 8.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = D:\Users\ronwe\Source\Repos\FXAI\TradingDashboard
+build_property._RazorSourceGeneratorDebug = 
+
+[D:/Users/ronwe/Source/Repos/FXAI/TradingDashboard/Components/LiveStatusBar.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xMaXZlU3RhdHVzQmFyLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Users/ronwe/Source/Repos/FXAI/TradingDashboard/Components/PatternChart.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYXR0ZXJuQ2hhcnQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Users/ronwe/Source/Repos/FXAI/TradingDashboard/Components/PatternStatsPanel.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYXR0ZXJuU3RhdHNQYW5lbC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Users/ronwe/Source/Repos/FXAI/TradingDashboard/Components/RefreshButton.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xSZWZyZXNoQnV0dG9uLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Users/ronwe/Source/Repos/FXAI/TradingDashboard/Components/StrategySelector.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xTdHJhdGVneVNlbGVjdG9yLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Users/ronwe/Source/Repos/FXAI/TradingDashboard/Components/TradeStatsPanel.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xUcmFkZVN0YXRzUGFuZWwucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Users/ronwe/Source/Repos/FXAI/TradingDashboard/Pages/CandleChart.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ2FuZGxlQ2hhcnQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Users/ronwe/Source/Repos/FXAI/TradingDashboard/Pages/Dashboard.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRGFzaGJvYXJkLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Users/ronwe/Source/Repos/FXAI/TradingDashboard/Pages/Diagnostics.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRGlhZ25vc3RpY3MucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Users/ronwe/Source/Repos/FXAI/TradingDashboard/Pages/Error.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXJyb3IucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Users/ronwe/Source/Repos/FXAI/TradingDashboard/Pages/OrderPanel.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcT3JkZXJQYW5lbC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Users/ronwe/Source/Repos/FXAI/TradingDashboard/Pages/PatternStatsPanel.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUGF0dGVyblN0YXRzUGFuZWwucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Users/ronwe/Source/Repos/FXAI/TradingDashboard/Pages/TickPanel.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVGlja1BhbmVsLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Users/ronwe/Source/Repos/FXAI/TradingDashboard/Pages/TopPatternsChart.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVG9wUGF0dGVybnNDaGFydC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Users/ronwe/Source/Repos/FXAI/TradingDashboard/Pages/TopPatternsPanel.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVG9wUGF0dGVybnNQYW5lbC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Users/ronwe/Source/Repos/FXAI/TradingDashboard/Shared/App.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXEFwcC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Users/ronwe/Source/Repos/FXAI/TradingDashboard/_Imports.razor]
+build_metadata.AdditionalFiles.TargetPath = X0ltcG9ydHMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Users/ronwe/Source/Repos/FXAI/TradingDashboard/Shared/MainLayout.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXE1haW5MYXlvdXQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = b-5tgnd3i09f
+
+[D:/Users/ronwe/Source/Repos/FXAI/TradingDashboard/Pages/_Host.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcX0hvc3QuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 

@@ -1,0 +1,61 @@
+﻿@using Microsoft.JSInterop
+@inject IJSRuntime JS
+@inject PatternStatsEngine StatsEngine
+
+<h3 class="text-lg font-semibold mb-2">🏆 Top Patterns Chart</h3>
+
+<select @onchange="OnMetricChanged" class="mb-2 p-1 border rounded">
+    <option value="NetPnL">Net PnL</option>
+    <option value="HitRate">Hit Rate</option>
+    <option value="Score">Confidence Score</option>
+</select>
+
+<div id="topPatternsChart" style="height: 400px;"></div>
+
+@code {
+    string selectedMetric = "NetPnL";
+    private Timer? refreshTimer;
+
+    protected override void OnInitialized()
+    {
+        refreshTimer = new Timer(async _ => await RefreshChart(), null, TimeSpan.Zero, TimeSpan.FromSeconds(5));
+    }
+
+    async Task OnMetricChanged(ChangeEventArgs e)
+    {
+        selectedMetric = e.Value?.ToString() ?? "NetPnL";
+        await RefreshChart();
+    }
+
+    async Task RefreshChart()
+    {
+        var stats = StatsEngine.GetStats().ToList();
+
+        var ranked = selectedMetric switch
+        {
+            "HitRate" => stats.OrderByDescending(p => p.HitRate).Take(5),
+            "NetPnL" => stats.OrderByDescending(p => p.NetPnL).Take(5),
+            "Score" => stats.OrderByDescending(p => p.HitRate * p.Count * (double)p.NetPnL).Take(5),
+            _ => stats.Take(5)
+        };
+
+        var chartData = ranked.Select(p => new
+        {
+            name = p.Type,
+            y = selectedMetric switch
+            {
+                "HitRate" => Math.Round(p.HitRate, 4),
+                "NetPnL" => Math.Round((double)p.NetPnL, 4),
+                "Score" => Math.Round(p.HitRate * p.Count * (double)p.NetPnL, 2),
+                _ => 0
+            }
+        }).ToList();
+
+        await JS.InvokeVoidAsync("renderTopPatternsChart", selectedMetric, chartData);
+    }
+
+    public void Dispose()
+    {
+        refreshTimer?.Dispose();
+    }
+}

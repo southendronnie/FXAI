@@ -1,0 +1,10 @@
+﻿<button class="btn btn-primary" @onclick="TriggerRefresh">🔄 Refresh</button>
+
+@code {
+    [Parameter] public EventCallback OnRefresh { get; set; }
+
+    private async Task TriggerRefresh()
+    {
+        await OnRefresh.InvokeAsync();
+    }
+}

@@ -1,0 +1,61 @@
+﻿@using Microsoft.JSInterop
+@inject IJSRuntime JS
+@inject HttpClient Http
+
+<div id="candleChart" style="height: 400px;"></div>
+
+@code {
+    private List<Candle> Candles = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Candles = await Http.GetFromJsonAsync<List<Candle>>("api/candles/latest") ?? new();
+        var chartOptions = BuildChartOptions(Candles);
+        await JS.InvokeVoidAsync("chartInterop.renderChart", "candleChart", chartOptions);
+    }
+
+    private object BuildChartOptions(List<Candle> candles)
+    {
+        var ohlc = candles.Select(c => new object[] {
+            ToJsTimestamp(c.Timestamp),
+            c.Open,
+            c.High,
+            c.Low,
+            c.Close
+        }).ToArray();
+
+        return new
+        {
+            chart = new { type = "candlestick" },
+            title = new { text = "OHLC Candle Chart" },
+            xAxis = new
+            {
+                type = "datetime"
+            },
+            yAxis = new
+            {
+                title = new { text = "Price" }
+            },
+            series = new[] {
+                new {
+                    name = "Candles",
+                    data = ohlc
+                }
+            }
+        };
+    }
+
+    private long ToJsTimestamp(DateTime dt)
+    {
+        return new DateTimeOffset(dt).ToUnixTimeMilliseconds();
+    }
+
+    public class Candle
+    {
+        public DateTime Timestamp { get; set; }
+        public decimal Open { get; set; }
+        public decimal High { get; set; }
+        public decimal Low { get; set; }
+        public decimal Close { get; set; }
+    }
+}

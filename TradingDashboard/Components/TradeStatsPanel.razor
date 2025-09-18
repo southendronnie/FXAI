@@ -1,0 +1,14 @@
+﻿@using TradingDashboard.Model
+@using TradingDashboard.Models
+
+<div class="panel">
+    <h3>Trade Stats</h3>
+    <p>Total Trades: @TradeResults.Count</p>
+    <p>Wins: @TradeResults.Count(t => t.IsWin)</p>
+    <p>Losses: @TradeResults.Count(t => !t.IsWin)</p>
+    <p>Average PnL: @TradeResults.Average(t => t.ProfitLoss):F2</p>
+</div>
+
+@code {
+    [Parameter] public List<TradeResult> TradeResults { get; set; } = new();
+}
