@@ -1,4 +1,5 @@
-﻿using TradingDashboard.Model;
+﻿using TradingDashboard.Models;
+using TradingDashboard.Models;
 
 namespace TradingDashboard.Services
 {

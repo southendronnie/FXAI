@@ -1,20 +1,24 @@
-﻿using Microsoft.Extensions.Hosting;
-
-namespace TradingDashboard.Models
+﻿public class TradeResult
 {
-  public class TradeResult
-  {
-    public string StrategyId { get; set; } = string.Empty;
-    public DateTime EntryTime { get; set; }
-    public DateTime ExitTime { get; set; }
-    public decimal EntryPrice { get; set; }
-    public decimal ExitPrice { get; set; }
-    public decimal ProfitLoss { get; set; }
-    public decimal RawPnL => ExitPrice - EntryPrice;
-    public decimal NetPnL => ProfitLoss; // Already adjusted
+  public DateTime EntryTime { get; set; }
+  public DateTime ExitTime { get; set; }
 
-    public bool IsWin => ProfitLoss > 0;
-    public TimeSpan Duration => ExitTime - EntryTime;
-    public decimal ReturnRate => EntryPrice > 0 ? (ExitPrice - EntryPrice) / EntryPrice : 0;
-  }
+  public decimal EntryPrice { get; set; }
+  public decimal ExitPrice { get; set; }
+
+  public TradeDirection Direction { get; set; } // Buy or Sell
+  public decimal Units { get; set; }
+
+  public decimal Profit { get; set; }           // Net PnL for this trade
+
+  public string StrategyId { get; set; } = string.Empty;
+  public string PatternId { get; set; } = string.Empty;
+
+  public string Instrument { get; set; } = string.Empty;
+  public string Notes { get; set; } = string.Empty;
+  public decimal ProfitLoss { get; set; }
+
+  public bool IsWin => ProfitLoss > 0;
+
+
 }

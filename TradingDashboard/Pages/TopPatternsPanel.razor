@@ -1,51 +1,50 @@
-﻿@inject PatternStatsEngine StatsEngine
+﻿@inject PatternService PatternService
 
-<h3 class="text-lg font-semibold mb-2">🏅 Top Patterns</h3>
+<h3>Top Patterns</h3>
 
-<select @bind="sortBy" class="mb-2 p-1 border rounded">
-    <option value="NetPnL">Net PnL</option>
-    <option value="HitRate">Hit Rate</option>
-    <option value="Score">Confidence Score</option>
-</select>
-
-<table class="table-auto w-full text-sm">
-    <thead>
-        <tr>
-            <th>Pattern</th>
-            <th>Count</th>
-            <th>Hit Rate</th>
-            <th>Net PnL</th>
-            <th>Score</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var p in topPatterns)
-        {
+@if (TopPatterns.Count == 0)
+{
+    <p>No patterns available.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
             <tr>
-                <td>@p.Type</td>
-                <td>@p.Count</td>
-                <td>@p.HitRate.ToString("P1")</td>
-                <td>@p.NetPnL.ToString("F4")</td>
-                <td>@(p.HitRate* p.Count * (double)p.NetPnL).ToString("F2")</td>
+                <th>Pattern</th>
+                <th>Strategy</th>
+                <th>Win Rate</th>
+                <th>Avg Return</th>
+                <th>Net PnL</th>
+                <th>Trades</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var stat in TopPatterns)
+            {
+                <tr>
+                    <td>@stat.PatternId</td>
+                    <td>@stat.StrategyId</td>
+                    <td>@(stat.WinRate.ToString("P1"))</td>
+                    <td>@(stat.AverageReturn.ToString("P2"))</td>
+                    <td>@stat.NetPnL.ToString("F2")</td>
+                    <td>@stat.TotalTrades</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
 
 @code {
-    string sortBy = "NetPnL";
-    List<PatternStats> topPatterns = new();
+    private List<PatternStats> TopPatterns = new();
 
     protected override void OnInitialized()
     {
-        var all = StatsEngine.GetStats().ToList();
-
-        topPatterns = sortBy switch
-        {
-            "HitRate" => all.OrderByDescending(p => p.HitRate).Take(5).ToList(),
-            "NetPnL" => all.OrderByDescending(p => p.NetPnL).Take(5).ToList(),
-            "Score" => all.OrderByDescending(p => p.HitRate * p.Count * (double)p.NetPnL).Take(5).ToList(),
-            _ => all.Take(5).ToList()
-        };
+        var allStats = PatternService.GetLatestStats();
+        TopPatterns = allStats
+            .Where(s => s.TotalTrades >= 10)
+            .OrderByDescending(s => s.NetPnL)
+            .Take(10)
+            .ToList();
     }
 }

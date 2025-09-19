@@ -1,3 +1,5 @@
+using TradingDashboard;
+using TradingDashboard.Models;
 using TradingDashboard.Services;
 using TradingDashboard.Shared;
 
@@ -23,6 +25,7 @@ builder.Services.AddRazorComponents().AddInteractiveServerComponents();
 builder.Services.AddSingleton<PatternStatsEngine>();
 builder.Services.AddSingleton<StrategyExecutionService>();
 builder.Services.AddSingleton<CandleLoader>();
+builder.Services.AddSingleton<OandaCostModel>();
 builder.Services.AddLogging();
 builder.Services.AddHealthChecks();
 

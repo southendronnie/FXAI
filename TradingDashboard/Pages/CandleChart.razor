@@ -1,7 +1,8 @@
 ﻿@using Microsoft.JSInterop
+@using TradingDashboard.Services
 @inject IJSRuntime JS
 @inject HttpClient Http
-
+@inject ApiClient Api
 <div id="candleChart" style="height: 400px;"></div>
 
 @code {

@@ -22,6 +22,18 @@ build_property.GenerateRazorMetadataSourceChecksumAttributes =
 build_property.MSBuildProjectDirectory = D:\Users\ronwe\Source\Repos\FXAI\TradingDashboard
 build_property._RazorSourceGeneratorDebug = 
 
+[D:/Users/ronwe/Source/Repos/FXAI/TradingDashboard/App.razor]
+build_metadata.AdditionalFiles.TargetPath = QXBwLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Users/ronwe/Source/Repos/FXAI/TradingDashboard/Components/ChartPanel.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xDaGFydFBhbmVsLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Users/ronwe/Source/Repos/FXAI/TradingDashboard/Components/Component.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xDb21wb25lbnQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
 [D:/Users/ronwe/Source/Repos/FXAI/TradingDashboard/Components/LiveStatusBar.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xMaXZlU3RhdHVzQmFyLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
@@ -66,10 +78,6 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcT3JkZXJQYW5lbC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Users/ronwe/Source/Repos/FXAI/TradingDashboard/Pages/PatternStatsPanel.razor]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUGF0dGVyblN0YXRzUGFuZWwucmF6b3I=
-build_metadata.AdditionalFiles.CssScope = 
-
 [D:/Users/ronwe/Source/Repos/FXAI/TradingDashboard/Pages/TickPanel.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVGlja1BhbmVsLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
@@ -80,10 +88,6 @@ build_metadata.AdditionalFiles.CssScope =
 
 [D:/Users/ronwe/Source/Repos/FXAI/TradingDashboard/Pages/TopPatternsPanel.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVG9wUGF0dGVybnNQYW5lbC5yYXpvcg==
-build_metadata.AdditionalFiles.CssScope = 
-
-[D:/Users/ronwe/Source/Repos/FXAI/TradingDashboard/Shared/App.razor]
-build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXEFwcC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/Users/ronwe/Source/Repos/FXAI/TradingDashboard/_Imports.razor]

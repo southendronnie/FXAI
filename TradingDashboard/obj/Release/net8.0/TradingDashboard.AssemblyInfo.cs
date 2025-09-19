@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TradingDashboard")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ca6686c9893c492bdae8e3796d5b98fcb955f0b9")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7403ca4bf7024e77bb9fb727909a1ec5137104ae")]
 [assembly: System.Reflection.AssemblyProductAttribute("TradingDashboard")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TradingDashboard")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

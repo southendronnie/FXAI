@@ -1,4 +1,4 @@
-﻿@page "/dashboard"
+﻿@page "/"
 @using TradingDashboard.Components
 @using TradingDashboard.Pages
 
@@ -6,17 +6,17 @@
 
 <div class="dashboard-grid">
     <div class="chart-section">
-        <PatternChart />
-        <TradeStatsPanel />
+        @* <PatternChart /> *@
+        @* <TradeStatsPanel /> *@
     </div>
 
-    <div class="strategy-section">
+@*     <div class="strategy-section">
         <StrategySelector />
         <OrderPanel />
-    </div>
+    </div> *@
 
     <div class="diagnostics-section">
-        <Diagnostics />
+        @* <Diagnostics /> *@
     </div>
 </div>
 

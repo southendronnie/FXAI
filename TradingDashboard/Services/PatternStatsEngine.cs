@@ -1,56 +1,79 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using TradingDashboard.Models;
 
 public class PatternStatsEngine
 {
-  private readonly Dictionary<string, List<decimal>> _rawPnls = new();
-  private readonly Dictionary<string, decimal> _totalCosts = new();
-
-  public void Record(string patternType, decimal rawPnl, decimal cost)
+  public PatternStats ComputeStats(IEnumerable<TradeResult> trades, string patternId, string strategyId)
   {
-    if (!_rawPnls.ContainsKey(patternType))
-      _rawPnls[patternType] = new List<decimal>();
-
-    _rawPnls[patternType].Add(rawPnl);
-
-    if (!_totalCosts.ContainsKey(patternType))
-      _totalCosts[patternType] = 0;
-
-    _totalCosts[patternType] += cost;
-  }
-
-  public IEnumerable<PatternStats> GetStats()
-  {
-    foreach (var kvp in _rawPnls)
+    var tradeList = trades.ToList();
+    int total = tradeList.Count;
+    if (total == 0)
     {
-      var pattern = kvp.Key;
-      var returns = kvp.Value;
-      var totalCost = _totalCosts.TryGetValue(pattern, out var cost) ? cost : 0;
-
-      var count = returns.Count;
-      var hitRate = count > 0 ? returns.Count(r => r > 0) / (double)count : 0;
-      var avgRaw = count > 0 ? returns.Average() : 0;
-      var avgCost = count > 0 ? totalCost / count : 0;
-      var netPnl = avgRaw - avgCost;
-      var maxDrawdown = count > 0 ? returns.Min() : 0;
-
-      yield return new PatternStats
+      return new PatternStats
       {
-        Type = pattern,
-        Count = count,
-        HitRate = hitRate,
-        AveragePnL = avgRaw,
-        TotalCost = avgCost,
-        NetPnL = netPnl,
-        MaxDrawdown = maxDrawdown
+        Timestamp = DateTime.UtcNow,
+        PatternId = patternId,
+        StrategyId = strategyId,
+        TotalTrades = 0,
+        WinRate = 0,
+        MaxDrawdown = 0,
+        AverageReturn = 0,
+        NetPnL = 0,
+        SharpeRatio = 0
       };
     }
+
+    double netPnL = tradeList.Sum(t => (double)t.Profit);
+    double avgReturn = tradeList.Average(t => (double)t.Profit);
+    double winRate = tradeList.Count(t => t.Profit > 0) / (double)total;
+
+    double maxDrawdown = CalculateMaxDrawdown(tradeList);
+    double sharpe = CalculateSharpeRatio(tradeList, avgReturn);
+
+    return new PatternStats
+    {
+      Timestamp = DateTime.UtcNow,
+      PatternId = patternId,
+      StrategyId = strategyId,
+      TotalTrades = total,
+      WinRate = winRate,
+      MaxDrawdown = maxDrawdown,
+      AverageReturn = avgReturn,
+      NetPnL = netPnL,
+      SharpeRatio = sharpe
+    };
   }
 
-  public void Reset()
+  private double CalculateMaxDrawdown(List<TradeResult> trades)
   {
-    _rawPnls.Clear();
-    _totalCosts.Clear();
+    double peak = 0;
+    double trough = 0;
+    double maxDrawdown = 0;
+    double cumulative = 0;
+
+    foreach (var trade in trades)
+    {
+      cumulative += (double)trade.Profit;
+      if (cumulative > peak)
+      {
+        peak = cumulative;
+        trough = cumulative;
+      }
+      if (cumulative < trough)
+      {
+        trough = cumulative;
+        maxDrawdown = Math.Min(maxDrawdown, trough - peak);
+      }
+    }
+
+    return maxDrawdown;
+  }
+
+  private double CalculateSharpeRatio(List<TradeResult> trades, double avgReturn)
+  {
+    if (trades.Count < 2) return 0;
+
+    double variance = trades.Select(t => Math.Pow((double)t.Profit - avgReturn, 2)).Average();
+    double stdDev = Math.Sqrt(variance);
+    return stdDev == 0 ? 0 : avgReturn / stdDev;
   }
 }

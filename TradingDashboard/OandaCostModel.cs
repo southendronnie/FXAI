@@ -1,4 +1,4 @@
-﻿namespace TradingDashboard.Model
+﻿namespace TradingDashboard.Models
 {
   public class OandaCostModel
   {

@@ -1,7 +1,7 @@
 ﻿@using Microsoft.JSInterop
-@inject HttpClient Http
+@using TradingDashboard.Services
 @inject IJSRuntime JS
-
+@inject ApiClient Api
 <div class="chart-container">
     <select @onchange="OnMetricChanged">
         @foreach (var metric in AvailableMetrics)
@@ -20,7 +20,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Stats = await Http.GetFromJsonAsync<List<PatternStat>>("api/patterns/stats") ?? new();
+        PatternStats patternStats = await Api.GetPatternStatsAsync("api/patterns/stats") ?? new();
         await RenderChartAsync();
     }
 

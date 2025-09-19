@@ -1,7 +1,9 @@
 ﻿@inject HttpClient Http
-@using TradingDashboard.Model
+@using TradingDashboard.Models
 @using TradingDashboard.Models
 <h3>System Diagnostics</h3>
+@using TradingDashboard.Services
+@inject ApiClient Api
 
 @if (Diagnostic is null)
 {
@@ -35,7 +37,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        Diagnostic = await Http.GetFromJsonAsync<List<DiagnosticItem>>("api/diagnostics");
+       // Diagnostic = await Api.<List<DiagnosticItem>>("api/diagnostics");
     }
 
     private string GetRowClass(string status) => status switch

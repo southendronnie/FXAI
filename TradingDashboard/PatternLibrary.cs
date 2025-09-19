@@ -1,5 +1,5 @@
 ﻿using System;
-using TradingDashboard.Model;
+using TradingDashboard.Models;
 
 public static class PatternLibrary
 {

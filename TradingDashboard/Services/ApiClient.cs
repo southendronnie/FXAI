@@ -1,8 +1,7 @@
 ﻿using System.Net.Http;
 using System.Net.Http.Json;
-using TradingDashboard.Model;
 using TradingDashboard.Models;
-using static TradingDashboard.Model.PatternStatsEngine;
+using static PatternStatsEngine;
 
 namespace TradingDashboard.Services
 {
@@ -108,9 +107,10 @@ namespace TradingDashboard.Services
       var order = new OrderRequest
       {
         Instrument = instrument,
-        Side = "buy",
+        Side = Enum.Parse<TradeDirection>("Buy"),
         Units = 1000,
-        Type = "market",
+        Type = Enum.Parse<OrderType>("Market"),
+
         StrategyId = "default"
       };
       return SubmitOrderAsync(order);

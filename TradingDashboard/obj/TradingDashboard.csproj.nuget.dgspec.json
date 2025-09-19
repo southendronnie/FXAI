@@ -52,13 +52,17 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
+            "MemoryPack": {
+              "target": "Package",
+              "version": "[1.21.4, )"
+            },
             "Microsoft.AspNetCore.Components": {
               "target": "Package",
-              "version": "[8.0.0, )"
+              "version": "[8.0.20, )"
             },
             "Microsoft.AspNetCore.Components.Forms": {
               "target": "Package",
-              "version": "[8.0.0, )"
+              "version": "[8.0.20, )"
             },
             "Microsoft.AspNetCore.Components.Web": {
               "target": "Package",
@@ -66,11 +70,11 @@
             },
             "Microsoft.Extensions.Logging.Console": {
               "target": "Package",
-              "version": "[8.0.0, )"
+              "version": "[8.0.1, )"
             },
             "Microsoft.JSInterop": {
               "target": "Package",
-              "version": "[8.0.0, )"
+              "version": "[8.0.20, )"
             },
             "Microsoft.NET.ILLink.Tasks": {
               "suppressParent": "All",
@@ -80,11 +84,11 @@
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
-              "version": "[6.5.0, )"
+              "version": "[8.1.4, )"
             },
             "System.Text.Json": {
               "target": "Package",
-              "version": "[8.0.0, )"
+              "version": "[8.0.6, )"
             }
           },
           "imports": [
