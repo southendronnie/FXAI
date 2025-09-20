@@ -18,8 +18,8 @@ build_property.GenerateRazorMetadataSourceChecksumAttributes =
 build_property.MSBuildProjectDirectory = C:\Users\ronwe\source\repos\southendronnie\FXAI\AIUI
 build_property._RazorSourceGeneratorDebug = 
 
-[C:/Users/ronwe/source/repos/southendronnie/FXAI/AIUI/Components/App.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xBcHAucmF6b3I=
+[C:/Users/ronwe/source/repos/southendronnie/FXAI/AIUI/App.razor]
+build_metadata.AdditionalFiles.TargetPath = QXBwLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/ronwe/source/repos/southendronnie/FXAI/AIUI/Components/ChartPanel.razor]

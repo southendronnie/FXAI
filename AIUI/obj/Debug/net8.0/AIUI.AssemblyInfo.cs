@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AIUI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+59d47df98882a918725facd1bcb7ceff016f0b04")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+44179a5e1397571b66d688815fcfbba9d047306a")]
 [assembly: System.Reflection.AssemblyProductAttribute("AIUI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AIUI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
