@@ -4,7 +4,13 @@
 <div class="chart-container">
     <div id="chartContainer" style="height: 400px; width: 100%;"></div>
 </div>
-
+@if (Dashboard.LatestCandles.Any())
+{
+    <details>
+        <summary>🧪 Debug: Latest Candle</summary>
+        <pre>@System.Text.Json.JsonSerializer.Serialize(Dashboard.LatestCandles.Last(), new System.Text.Json.JsonSerializerOptions { WriteIndented = true })</pre>
+    </details>
+}
 @code {
     protected override void OnInitialized()
     {

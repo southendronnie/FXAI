@@ -11,18 +11,26 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.0" />
     <PackageReference Include="MemoryPack" Version="1.10.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
   </ItemGroup>
 <ItemGroup>
-  <PackageReference Include="NSwag.MSBuild" Version="13.20.2" />
+  <PackageReference Include="NSwag.MSBuild" Version="14.6.0">
+    <PrivateAssets>all</PrivateAssets>
+    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+  </PackageReference>
 </ItemGroup>
 <Target Name="NSwag" BeforeTargets="BeforeBuild">
-  <Exec Command="dotnet nswag run nswag.json" />
+  <Exec Command="nswag run nswag.json" />
 </Target>
 
   <ItemGroup>
     <Content Include="wwwroot\js\chartInterop.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="api\" />
   </ItemGroup>
 
 </Project>

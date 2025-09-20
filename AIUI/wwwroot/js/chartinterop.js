@@ -1,4 +1,7 @@
 window.renderOhlcWithTicks = function (ohlcData, tickData) {
+    window.renderOhlcWithTicks = function (ohlcData, tickData) {
+        try {
+
     Highcharts.stockChart('chartContainer', {
         rangeSelector: { selected: 1 },
         title: { text: 'Live OHLC + Tick Overlay' },
@@ -33,4 +36,10 @@ window.renderOhlcWithTicks = function (ohlcData, tickData) {
             }
         ]
     });
+    } catch (err) {
+        console.error("Highcharts render error:", err);
+        console.log("OHLC:", ohlcData);
+        console.log("Ticks:", tickData);
+    }
+};
 };
