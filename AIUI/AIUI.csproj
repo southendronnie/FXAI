@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>AIUI</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.0" />
+    <PackageReference Include="MemoryPack" Version="1.10.0" />
+  </ItemGroup>
+<ItemGroup>
+  <PackageReference Include="NSwag.MSBuild" Version="13.20.2" />
+</ItemGroup>
+<Target Name="NSwag" BeforeTargets="BeforeBuild">
+  <Exec Command="dotnet nswag run nswag.json" />
+</Target>
+
+  <ItemGroup>
+    <Content Include="wwwroot\js\chartInterop.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+</Project>

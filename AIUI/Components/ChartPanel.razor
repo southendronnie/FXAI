@@ -1,0 +1,31 @@
+@inject DashboardState Dashboard
+@inject IJSRuntime JS
+
+<div class="chart-container">
+    <div id="chartContainer" style="height: 400px; width: 100%;"></div>
+</div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        Dashboard.OnChange += RefreshChart;
+    }
+
+    private async void RefreshChart()
+    {
+        var ohlcData = Dashboard.LatestCandles
+            .Select(c => new[] { ToUnix(c.Time), c.Open, c.High, c.Low, c.Close })
+            .ToArray();
+
+        await JS.InvokeVoidAsync("renderOhlcChart", ohlcData);
+        StateHasChanged();
+    }
+
+    private long ToUnix(DateTime time) =>
+        new DateTimeOffset(time).ToUnixTimeMilliseconds();
+
+    public void Dispose()
+    {
+        Dashboard.OnChange -= RefreshChart;
+    }
+}

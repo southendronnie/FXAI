@@ -1,0 +1,29 @@
+{
+  "Files": [
+    {
+      "Id": "C:\\Users\\ronwe\\source\\repos\\southendronnie\\FXAI\\AIUI\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\AIUI.bundle.scp.css",
+      "PackagePath": "staticwebassets\\AIUI.bundle.scp.css"
+    },
+    {
+      "Id": "C:\\Users\\ronwe\\source\\repos\\southendronnie\\FXAI\\AIUI\\wwwroot\\app.css",
+      "PackagePath": "staticwebassets\\app.css"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.AIUI.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.AIUI.props",
+      "PackagePath": "build\\AIUI.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.AIUI.props",
+      "PackagePath": "buildMultiTargeting\\AIUI.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.AIUI.props",
+      "PackagePath": "buildTransitive\\AIUI.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

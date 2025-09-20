@@ -1,0 +1,22 @@
+{
+  "runtime": "Net80",
+  "defaultVariables": null,
+  "documentGenerator": {
+    "fromSwagger": {
+      "url": "https://fxai2-hrgzeve9dka0aqg3.canadacentral-01.azurewebsites.net/swagger/v1/swagger.json"
+    }
+  },
+  "codeGenerators": {
+    "openApiToCSharpClient": {
+      "className": "OandaDataClient",
+      "namespace": "AIUI.Api",
+      "generateClientInterfaces": true,
+      "generateDtoTypes": true,
+      "useHttpClientCreationMethod": false,
+      "injectHttpClient": true,
+      "disposeHttpClient": false,
+      "useBaseUrl": true,
+      "output": "Api/OandaDataClient.cs"
+    }
+  }
+}
